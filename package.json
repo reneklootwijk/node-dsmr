@@ -32,7 +32,7 @@
     "rewiremock": "^3.13.9"
   },
   "scripts": {
-    "lint": "node_modules/.bin/eslint **/*.js",
+    "lint": "node_modules/.bin/eslint '**/*.js'",
     "test": "./node_modules/.bin/nyc --reporter=html --reporter=text ./node_modules/.bin/_mocha test/*.spec.js -R spec",
     "report-coverage": "./node_modules/.bin/nyc report --reporter=text-lcov > coverage.lcov && ./node_modules/.bin/codecov"
   }
