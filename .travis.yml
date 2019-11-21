@@ -1,0 +1,16 @@
+language: node_js
+
+jobs:
+  include:
+    - stage: 'node 12.13.0'
+      node_js: 12.13.0
+      cache:
+        paths:
+          - node_modules/
+      before_script:
+        - export TZ='Europe/Amsterdam'
+        - npm install
+      script:
+        - npm run test
+        - npm run lint
+      after_success: 'npm run report-coverage'

@@ -1,0 +1,39 @@
+{
+  "name": "node-dsmr",
+  "version": "0.1.0",
+  "author": "Rene Klootwijk <rene@klootwijk.org>",
+  "description": "Parser for the DSMR protocol used on the P1 port of smart meters",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/reneklootwijk/node-dsmr.git"
+  },
+  "dependencies": {
+    "serialport": "^8.0.5",
+    "winston": "^3.2.1"
+  },
+  "license": "MIT",
+  "main": "./lib/index.js",
+  "directories": {
+    "lib": "/.lib"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "codecov": "^3.6.1",
+    "eslint": "^6.6.0",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-mocha": "^6.2.1",
+    "eslint-plugin-node": "^10.0.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "istanbul": "^0.4.5",
+    "mocha": "^6.2.2",
+    "nyc": "^14.1.1",
+    "rewiremock": "^3.13.9"
+  },
+  "scripts": {
+    "lint": "node_modules/.bin/eslint **/*.js",
+    "test": "./node_modules/.bin/nyc --reporter=html --reporter=text ./node_modules/.bin/_mocha test/*.spec.js -R spec",
+    "report-coverage": "./node_modules/.bin/nyc report --reporter=text-lcov > coverage.lcov && ./node_modules/.bin/codecov"
+  }
+}
