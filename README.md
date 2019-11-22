@@ -48,7 +48,7 @@ smartMeter.connect()
 When an event happens, e.g. successful connection or a telegram has been received, the event will be emitted. By creating listeners for these events, the event can be processed in your code.
 
 * `connected`, a successful connection to the serial port has been made.
-* `telegram`, a new telegram has been received, the data of the event is the complete telegram as a JSON object.
+* `telegram`, a new telegram has been received, the data of the event is the complete telegram as a JSON.
     
     Example:
     ```javascript
@@ -74,7 +74,7 @@ When an event happens, e.g. successful connection or a telegram has been receive
     }
     ```
 
-* `update`, a new telegram has been received with updated metrics, the data of the event contains the updated metrics as a JSON object.  
+* `update`, a new telegram has been received with updated metrics, the data of the event contains the updated metrics as JSON. The power metrics presenting the actual consumption and/or production are continuously measured and for that reason always included in the update event, even when the actual value is the same as the previous measurement. The gas metrics presenting the total consumption is measured periodically as indicated with the included timestamp. When the timestamp indicates a new measurement has been performed, the value is included in the update event even when the measurement is the same as the previous measurement.
     
     Example:
     ```javascript
@@ -82,10 +82,69 @@ When an event happens, e.g. successful connection or a telegram has been receive
         "power": {
             "totalConsumed1": 123456.789,
             "activeTariff": 1,
-            "actualConsumed": 1.193
+            "actualConsumed": 1.193,
+            "actualProduced": 0
         }
     }
      ```
+### Reported metrics
+The following metrics are reported when they are included in the telegram received from the P1 port:
+
+| Category | Metric | Description                                  |
+|-|-|-|
+| | meterModel | |
+| | dsmrVersion| only report for DSMR version 4.x and 5.x |
+| | timestamp | timestamp of the telegram |
+| **`power`** | equipmentId | |
+| | totalConsumed1 | total consumption in tariff 1 (off-peak) |
+| | totalConsumed2 | total consumption in tariff 2 (peak) |
+| | totalProduced1 | total production in tariff 1 (off-peak) |
+| | totalProduced2 | total production in tariff 2 (peak) |
+| | actualConsumed | |
+| | actualProduced | |
+| | actualTariff | active tariff (1=off-peak or 2=peak) |
+| | failureLog | power failure event log (see below) |
+| | failures | number of power failures |
+| | failuresLong | number of long power failures |
+| | voltageSagsL1 | |
+| | voltageSagsL2 | |
+| | voltageSagsL3 | |
+| | voltageSwellsL1 | |
+| | voltageSwellsL2 | |
+| | voltageSwellsL3 | |
+| | instantaneousCurrentL1 | |
+| | instantaneousCurrentL2 | |
+| | instantaneousCurrentL3 | |
+| | instantaneousVoltageL1 | |
+| | instantaneousVoltageL2 | |
+| | instantaneousVoltageL3 | |
+| | instantaneousConsumedElectricityL1 | |
+| | instantaneousConsumedElectricityL2 | |
+| | instantaneousConsumedElectricityL3 | |
+| | instantaneousProducedElectricityL1 | |
+| | instantaneousProducedElectricityL2 | |
+| | instantaneousProducedElectricityL3 | |
+| | switchPosition | |
+| **`gas`** | equipmentId | |
+| | timestamp | timestamp of the last measurement |
+| | totalConsumed | measured total consumption |
+| | reportedPeriod | period in minutes over which the total consumption is reported |
+| | valvePosition | |
+
+### Failures
+DSMR version 4.x and 5.x might contain a failure event log which is reported as an array. Example:
+```javascript
+[
+    {
+        "timestampEnd": 1291818255,
+        "duration": 240
+    },
+    {
+        "timestampEnd": 1291817404,
+        "duration": 301
+    }
+]
+```
 
 ### Parser
 It is also possible to only use the parser without the connectivity logic:
