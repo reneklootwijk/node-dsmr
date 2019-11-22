@@ -1,6 +1,6 @@
 {
   "name": "node-dsmr",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "author": "Rene Klootwijk <rene@klootwijk.org>",
   "description": "Parser for the DSMR protocol used on the P1 port of smart meters",
   "repository": {
@@ -30,6 +30,9 @@
     "mocha": "^6.2.2",
     "nyc": "^14.1.1",
     "rewiremock": "^3.13.9"
+  },
+    "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "lint": "node_modules/.bin/eslint '**/*.js'",

@@ -136,6 +136,7 @@ describe('Parser tests:', function () {
 
     it('the consumed gas should have been determined', function () {
       assert.strictEqual(result.gas.totalConsumed, 0, 'wrong total gas consumption')
+      assert.strictEqual(result.gas.reportedPeriod, 60, 'wrong reported period')
     })
 
     it('the consumed gas timestamp should have been determined', function () {
@@ -195,6 +196,7 @@ describe('Parser tests:', function () {
 
     it('the consumed gas should have been determined', function () {
       assert.strictEqual(result.gas.totalConsumed, 12785.123, 'wrong total gas consumption')
+      assert.strictEqual(result.gas.reportedPeriod, 60, 'wrong reported period')
     })
 
     it('the consumed gas timestampshould have been determined', function () {
@@ -271,6 +273,10 @@ describe('Parser tests:', function () {
 
     it('the consumed gas should have been determined', function () {
       assert.strictEqual(result.gas.totalConsumed, 12785.123, 'wrong total gas consumption')
+      assert.strictEqual(result.gas.reportedPeriod, 5, 'wrong reported period')
+    })
+
+    it('the consumed gas timestamp should have been determined', function () {
       assert.strictEqual(result.gas.timestamp, 1291890300, 'wrong timestamp gas measurement')
     })
 

@@ -131,6 +131,8 @@ describe('Integration test:', function () {
         totalConsumed: 0.01
       },
       power: {
+        actualConsumed: 1.19,
+        actualProduced: 0,
         totalConsumed1: 12367.89
       }
     }
@@ -175,6 +177,14 @@ describe('Integration test:', function () {
   })
 
   describe('process updates when there are none: ', function () {
+    var actualUpdates = {
+      power: {
+        actualConsumed: 1.19,
+        actualProduced: 0
+      }
+    }
+    var updates
+
     before(function (done) {
       eventTelegram = false
       eventUpdate = false
@@ -185,6 +195,7 @@ describe('Integration test:', function () {
 
       meter.on('update', (data) => {
         eventUpdate = true
+        updates = data
       })
 
       meter._connection._connection.mockData(dsmr3Update)
@@ -199,8 +210,14 @@ describe('Integration test:', function () {
       assert.strictEqual(eventTelegram, true, 'the telegram event has not been set')
     })
 
-    it('the update event should not be received', function () {
-      assert.strictEqual(eventUpdate, false, 'the updates event has been set')
+    // The update event should always be received when actual power consumption
+    // and/or production is reported
+    it('the update event should be received', function () {
+      assert.strictEqual(eventUpdate, true, 'the updates event has not been set')
+    })
+
+    it('the updates object should contain only the updates', function () {
+      assert.deepEqual(updates, actualUpdates, 'the updates object does not contain the updates only')
     })
   })
 })
