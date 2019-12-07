@@ -15,7 +15,7 @@ const SmartMeter = require('node-dsmr')
 
 var options = {
     port: '/dev/ttyUSB0',
-    bps: 9600,
+    baudrate: 9600,
     bits: 7,
     parity: 'even'
 }
