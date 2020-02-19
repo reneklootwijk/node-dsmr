@@ -8,7 +8,7 @@
     "url": "https://github.com/reneklootwijk/node-dsmr.git"
   },
   "dependencies": {
-    "serialport": "^8.0.5",
+    "serialport": "^8.0.7",
     "winston": "^3.2.1"
   },
   "license": "MIT",
@@ -18,7 +18,7 @@
   },
   "devDependencies": {
     "chai": "^4.2.0",
-    "codecov": "^3.6.1",
+    "codecov": ">=3.6.5",
     "eslint": "^6.6.0",
     "eslint-config-standard": "^14.1.0",
     "eslint-plugin-import": "^2.18.2",

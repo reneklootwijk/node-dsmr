@@ -9,7 +9,7 @@ module.exports = class Serialport extends EventEmitter {
   }
 
   mockDisconnect () {
-    this.parser.emit('close')
+    this.emit('close')
   }
 
   mockData (data) {
@@ -23,7 +23,7 @@ module.exports = class Serialport extends EventEmitter {
   }
 
   open () {
-    this.parser.emit('open')
+    this.emit('open')
   }
 
   pipe () {
