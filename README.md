@@ -1,4 +1,7 @@
-[![Build Status](https://travis-ci.org/reneklootwijk/node-dsmr.svg?branch=master)](https://travis-ci.org/reneklootwijk/node-dsmr) [![codecov](https://codecov.io/gh/reneklootwijk/node-dsmr/branch/master/graph/badge.svg)](https://codecov.io/gh/reneklootwijk/node-dsmr)
+
+![Test & Publish](https://github.com/reneklootwijk/node-dsmr/workflows/Test%20&%20Publish/badge.svg)
+[![npm version](https://badge.fury.io/js/node-dsmr.svg)](https://badge.fury.io/js/node-dsmr)
+---
 
 # DSMR (Dutch Smart Meter Requirements) Parser
 The parser supports telegrams compliant to DSMR version 2.x, 3.x, 4.x and 5.x.
