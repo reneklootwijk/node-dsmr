@@ -1,6 +1,7 @@
 
 ![Test & Publish](https://github.com/reneklootwijk/node-dsmr/workflows/Test%20&%20Publish/badge.svg)
-[![npm version](https://badge.fury.io/js/node-dsmr.svg)](https://badge.fury.io/js/node-dsmr)
+[![Coverage Status](https://coveralls.io/repos/github/reneklootwijk/node-dsmr/badge.svg?branch=master)](https://coveralls.io/github/reneklootwijk/node-dsmr?branch=master)
+![npm](https://img.shields.io/npm/v/node-dsmr)
 ---
 
 # DSMR (Dutch Smart Meter Requirements) Parser
