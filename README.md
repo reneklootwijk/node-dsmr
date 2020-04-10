@@ -20,7 +20,7 @@ const SmartMeter = require('node-dsmr')
 var options = {
     port: '/dev/ttyUSB0',
     baudrate: 9600,
-    bits: 7,
+    databits: 7,
     parity: 'even'
 }
 
@@ -37,7 +37,7 @@ var smartMeter = new SmartMeter(options)
 The arguments are:
 * `port`, serial port to which the P1 port is connected
 * `baudrate`, the rate at which the P1 port communicates, for DSMR 2.2 and 3.0 meters this is `9600` and for 4.x this is `115200`.
-* `bits`, the number of bits used, for DSMR 2.2 and 3.0 meters this is `7` and for 4.x this is `8`.
+* `databits`, the number of bits used, for DSMR 2.2 and 3.0 meters this is `7` and for 4.x this is `8`.
 * `parity`, the parity used, for DSMR 2.2 and 3.0 this is `even` and for 4.x this is `none`.
 
 ### SmartMeter.connect
