@@ -180,3 +180,24 @@ const telegram = [
 
 console.log(parser(telegram))
 ```
+
+### Logging
+Winston is used for logging. This means when you configure Winston in your code, the module will start to log accordingly. For instance, when you add the following to your code:
+
+```
+const logger = require('winston')
+
+logger.remove(logger.transports.Console)
+logger.add(new logger.transports.Console({
+  format: logger.format.combine(
+    logger.format.timestamp(),
+    logger.format.colorize(),
+    logger.format.printf(event => {
+      return `${event.timestamp} ${event.level}: ${event.message}`
+    })
+  ),
+  level: 'debug'
+}))
+```
+
+The module will start logging to stdout with level debug.
