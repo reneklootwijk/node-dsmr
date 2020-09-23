@@ -1,11 +1,11 @@
-name: Node.js Package
+name : build
 
 on:
-  release:
-    types: [created]
+  - push
+  - pull_request
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -15,24 +15,20 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - run: npm install
-      - run: npm run coverage
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run test
         env:
           TZ: 'Europe/Amsterdam'
-      - name: Coveralls Parallel
+      - run: npm run coverage
+      - name: Coveralls
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          parallel: true
-          path-to-lcov: ./coverage/lcov.info
-      - name: Coveralls Finished
-        uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          parallel-finished: true
 
   publish-npm:
-    needs: test
+    if: ${{ github.event_name == 'push' }}
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -40,7 +36,8 @@ jobs:
         with:
           node-version: 12
           registry-url: https://registry.npmjs.org/
-      - run: npm install
-      - run: npm publish
-        env:
-          NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - run: npm ci
+      - uses: JS-DevTools/npm-publish@v1
+        with:
+          token: ${{secrets.NPM_AUTH_TOKEN}}
+

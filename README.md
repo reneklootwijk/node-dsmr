@@ -1,10 +1,9 @@
-
-![Test & Publish](https://github.com/reneklootwijk/node-dsmr/workflows/Test%20&%20Publish/badge.svg)
-[![Coverage Status](https://coveralls.io/repos/github/reneklootwijk/node-dsmr/badge.svg?branch=master)](https://coveralls.io/github/reneklootwijk/node-dsmr?branch=master)
-![npm](https://img.shields.io/npm/v/node-dsmr)
----
-
 # DSMR (Dutch Smart Meter Requirements) Parser
+
+[![Build](https://github.com/reneklootwijk/node-dsmr/workflows/build/badge.svg)](https://github.com/reneklootwijk/node-dsmr/actions)
+[![Coverage Status](https://coveralls.io/repos/github/reneklootwijk/node-dsmr/badge.svg?branch=master)](https://coveralls.io/github/reneklootwijk/node-dsmr?branch=master)
+[![npm](https://img.shields.io/npm/v/node-dsmr)](https://www.npmjs.com/package/node-dsmr)
+
 The parser supports telegrams compliant to DSMR version 2.x, 3.x, 4.x and 5.x.
 
 ## Installation

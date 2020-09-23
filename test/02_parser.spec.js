@@ -308,15 +308,15 @@ describe('Parser tests:', function () {
     })
 
     it('the instantaneous produced electricity should have been determined', function () {
-      assert.strictEqual(result.power.instantaneousProducedElectricityL1, 1.111, 'wrong instantaneous produced electricity l1')
-      assert.strictEqual(result.power.instantaneousProducedElectricityL2, 2.222, 'wrong instantaneous produced electricity l2')
-      assert.strictEqual(result.power.instantaneousProducedElectricityL3, 3.333, 'wrong instantaneous produced electricity l3')
+      assert.strictEqual(result.power.instantaneousProducedElectricityL1, 4.444, 'wrong instantaneous produced electricity l1')
+      assert.strictEqual(result.power.instantaneousProducedElectricityL2, 5.555, 'wrong instantaneous produced electricity l2')
+      assert.strictEqual(result.power.instantaneousProducedElectricityL3, 6.666, 'wrong instantaneous produced electricity l3')
     })
 
     it('the instantaneous consumed electricity should have been determined', function () {
-      assert.strictEqual(result.power.instantaneousConsumedElectricityL1, 4.444, 'wrong instantaneous consumed electricity l1')
-      assert.strictEqual(result.power.instantaneousConsumedElectricityL2, 5.555, 'wrong instantaneous consumed electricity l2')
-      assert.strictEqual(result.power.instantaneousConsumedElectricityL3, 6.666, 'wrong instantaneous consumed electricity l3')
+      assert.strictEqual(result.power.instantaneousConsumedElectricityL1, 1.111, 'wrong instantaneous consumed electricity l1')
+      assert.strictEqual(result.power.instantaneousConsumedElectricityL2, 2.222, 'wrong instantaneous consumed electricity l2')
+      assert.strictEqual(result.power.instantaneousConsumedElectricityL3, 3.333, 'wrong instantaneous consumed electricity l3')
     })
   })
 })
