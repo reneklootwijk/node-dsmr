@@ -21,6 +21,8 @@ jobs:
         env:
           TZ: 'Europe/Amsterdam'
       - run: npm run coverage
+          env:
+          TZ: 'Europe/Amsterdam'
       - name: Coveralls
         uses: coverallsapp/github-action@master
         with:
