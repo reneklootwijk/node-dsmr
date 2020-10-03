@@ -7,6 +7,7 @@
 The parser supports telegrams compliant to DSMR version 2.x, 3.x, 4.x and 5.x.
 
 ## Installation
+
 ```bash
 $ npm install node-dsmr
 ```
@@ -27,6 +28,7 @@ var smartmeter = new SmartMeter(options)
 ```
 
 ### SmartMeter
+
 Instantiate a new SmartMeter object by specifying the characteristics of the P1 port.
 
 ```javascript
@@ -34,12 +36,15 @@ var smartMeter = new SmartMeter(options)
 ```
 
 The arguments are:
+
 * `port`, serial port to which the P1 port is connected
 * `baudrate`, the rate at which the P1 port communicates, for DSMR 2.2 and 3.0 meters this is `9600` and for 4.x this is `115200`.
 * `databits`, the number of bits used, for DSMR 2.2 and 3.0 meters this is `7` and for 4.x this is `8`.
 * `parity`, the parity used, for DSMR 2.2 and 3.0 this is `even` and for 4.x this is `none`.
+* `disableCrcChecking`, when set to `true` the CRC check is disabled. The default is to check the CRC specified in the telegram with the calculated CRC, when they do not match, the telegram is not processed. When no CRC is specified as part of the telegram (e.g. for a DSMR 2.x message), the check is bypassed.
 
 ### SmartMeter.connect
+
 The connect method is used to connect and open the serial port.
  
 ```javascript
@@ -48,12 +53,14 @@ smartMeter.connect()
 
 
 ### Events
+
 When an event happens, e.g. successful connection or a telegram has been received, the event will be emitted. By creating listeners for these events, the event can be processed in your code.
 
 * `connected`, a successful connection to the serial port has been made.
 * `telegram`, a new telegram has been received, the data of the event is the complete telegram as a JSON.
-    
+
     Example:
+
     ```javascript
     {
         power: {
@@ -78,8 +85,9 @@ When an event happens, e.g. successful connection or a telegram has been receive
     ```
 
 * `update`, a new telegram has been received with updated metrics, the data of the event contains the updated metrics as JSON. The power metrics presenting the actual consumption and/or production are continuously measured and for that reason always included in the update event, even when the actual value is the same as the previous measurement. The gas metrics presenting the total consumption is measured periodically as indicated with the included timestamp. When the timestamp indicates a new measurement has been performed, the value is included in the update event even when the measurement is the same as the previous measurement.
-    
+
     Example:
+
     ```javascript
     {
         "power": {
@@ -90,7 +98,9 @@ When an event happens, e.g. successful connection or a telegram has been receive
         }
     }
      ```
+
 ### Reported metrics
+
 The following metrics are reported when they are included in the telegram received from the P1 port:
 
 | Category | Metric | Description                                  |
@@ -135,21 +145,26 @@ The following metrics are reported when they are included in the telegram receiv
 | | valvePosition | |
 
 ### Failures
-DSMR version 4.x and 5.x might contain a failure event log which is reported as an array. Example:
-```javascript
-[
-    {
-        "timestampEnd": 1291818255,
-        "duration": 240
-    },
-    {
-        "timestampEnd": 1291817404,
-        "duration": 301
-    }
-]
-```
+
+DSMR version 4.x and 5.x might contain a failure event log which is reported as an array. 
+
+    Example:
+
+    ```javascript
+    [
+        {
+            "timestampEnd": 1291818255,
+            "duration": 240
+        },
+        {
+            "timestampEnd": 1291817404,
+            "duration": 301
+        }
+    ]
+    ```
 
 ### Parser
+
 It is also possible to only use the parser without the connectivity logic:
 
 ```javascript
@@ -181,9 +196,10 @@ console.log(parser(telegram))
 ```
 
 ### Logging
+
 Winston is used for logging. This means when you configure Winston in your code, the module will start to log accordingly. For instance, when you add the following to your code:
 
-```
+``` javascript
 const logger = require('winston')
 
 logger.remove(logger.transports.Console)

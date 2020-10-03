@@ -11,6 +11,19 @@ rewireMock('serialport').by('./mocks/serialport')
 
 const SmartMeter = require('../lib')
 
+// Initialize logger
+logger.remove(logger.transports.Console)
+logger.add(new logger.transports.Console({
+  format: logger.format.combine(
+    logger.format.timestamp(),
+    logger.format.colorize(),
+    logger.format.printf(event => {
+      return `${event.timestamp} ${event.level}: ${event.message}`
+    })
+  ),
+  level: 'none'
+}))
+
 const dsmr3 = [
   '/ISk5\\2MT382-1000',
   '0-0:96.1.1(4B384547303034303436333935353037)',
@@ -55,22 +68,91 @@ const dsmr3Update = [
   '!'
 ]
 
+const dsmr5 = [
+  '/XMX5LGF0010455307579',
+  '',
+  '1-3:0.2.8(50)',
+  '0-0:1.0.0(201003203959S)',
+  '0-0:96.1.1(4530303637303035353330373537393230)',
+  '1-0:1.8.1(000526.479*kWh)',
+  '1-0:1.8.2(000583.955*kWh)',
+  '1-0:2.8.1(000000.000*kWh)',
+  '1-0:2.8.2(000000.000*kWh)',
+  '0-0:96.14.0(0001)',
+  '1-0:1.7.0(00.781*kW)',
+  '1-0:2.7.0(00.000*kW)',
+  '0-0:96.7.21(00010)',
+  '0-0:96.7.9(00002)',
+  '1-0:99.97.0(1)(0-0:96.7.19)(000101010000W)(0000000232*s)',
+  '1-0:32.32.0(00006)',
+  '1-0:52.32.0(00005)',
+  '1-0:72.32.0(00005)',
+  '1-0:32.36.0(00000)',
+  '1-0:52.36.0(00000)',
+  '1-0:72.36.0(00000)',
+  '0-0:96.13.0()',
+  '1-0:32.7.0(230.2*V)',
+  '1-0:52.7.0(234.3*V)',
+  '1-0:72.7.0(228.7*V)',
+  '1-0:31.7.0(001*A)',
+  '1-0:51.7.0(002*A)',
+  '1-0:71.7.0(000*A)',
+  '1-0:21.7.0(00.298*kW)',
+  '1-0:41.7.0(00.458*kW)',
+  '1-0:61.7.0(00.025*kW)',
+  '1-0:22.7.0(00.000*kW)',
+  '1-0:42.7.0(00.000*kW)',
+  '1-0:62.7.0(00.000*kW)',
+  '0-1:24.1.0(003)',
+  '0-1:96.1.0(4730303738353635353836323132323230)',
+  '0-1:24.2.1(201003203926S)(00035.545*m3)',
+  '!459C'
+]
+
+const dsmr5Error = [
+  '/XMX5LGF0010455307579',
+  '',
+  '1-3:0.2.8(50)',
+  '0-0:1.0.0(201003203959S)',
+  '0-0:96.1.1(4530303637303035353330373537393230)',
+  '1-0:1.8.1(000526.479*kWh)',
+  '1-0:1.8.2(000583.955*kWh)',
+  '1-0:2.8.1(000000.000*kWh)',
+  '1-0:2.8.2(000000.000*kWh)',
+  '0-0:96.14.0(0001)',
+  '1-0:1.7.0(00.781*kW)',
+  '1-0:2.7.0(00.000*kW)',
+  '0-0:96.7.21(00010)',
+  '0-0:96.7.9(00002)',
+  '1-0:99.97.0(1)(0-0:96.7.19)(000101010000W)(0000000232*s)',
+  '1-0:32.32.0(00006)',
+  '1-0:52.32.0(00005)',
+  '1-0:72.32.0(00005)',
+  '1-0:32.36.0(00000)',
+  '1-0:52.36.0(00000)',
+  '1-0:72.36.0(00000)',
+  '0-0:96.13.0()',
+  '1-0:32.7.0(230.2*V)',
+  '1-0:52.7.0(234.3*V)',
+  '1-0:72.7.0(228.7*V)',
+  '1-0:31.7.0(001*A)',
+  '1-0:51.7.0(002*A)',
+  '1-0:71.7.0(000*A)',
+  '1-0:21.7.0(00.298*kW)',
+  '1-0:41.7.0(00.458*kW)',
+  '1-0:61.7.0(00.025*kW)',
+  '1-0:22.7.0(00.000*kW)',
+  '1-0:42.7.0(00.000*kW)',
+  '1-0:62.7.0(00.000*kW)',
+  '0-1:24.1.0(003)',
+  '0-1:96.1.0(4730303738353635353836323132323230)',
+  '0-1:24.2.1(201003203926S)(00035.545*m3)',
+  '!459D'
+]
+
 var meter
 var eventTelegram
 var eventUpdate
-
-// Initialize logger
-logger.remove(logger.transports.Console)
-logger.add(new logger.transports.Console({
-  format: logger.format.combine(
-    logger.format.timestamp(),
-    logger.format.colorize(),
-    logger.format.printf(event => {
-      return `${event.timestamp} ${event.level}: ${event.message}`
-    })
-  ),
-  level: 'none'
-}))
 
 describe('Integration test:', function () {
   meter = new SmartMeter({
@@ -218,6 +300,94 @@ describe('Integration test:', function () {
 
     it('the updates object should contain only the updates', function () {
       assert.deepEqual(updates, actualUpdates, 'the updates object does not contain the updates only')
+    })
+  })
+
+  describe('process telegram with correct checksum: ', function () {
+    before(function (done) {
+      eventUpdate = false
+
+      meter.on('telegram', (data) => {
+        eventTelegram = true
+      })
+
+      meter.on('update', (data) => {
+        eventUpdate = true
+      })
+
+      meter._connection._connection.mockData(dsmr5)
+
+      // Wait
+      setTimeout(() => {
+        done()
+      }, 100)
+    })
+
+    it('the telegram event should be received', function () {
+      assert.strictEqual(eventTelegram, true, 'the telegram event has not been set')
+    })
+
+    it('the update event should be received', function () {
+      assert.strictEqual(eventUpdate, true, 'the updates event has not been set')
+    })
+  })
+
+  describe('process telegram with in-correct checksum: ', function () {
+    before(function (done) {
+      eventUpdate = false
+
+      meter.on('telegram', (data) => {
+        eventTelegram = true
+      })
+
+      meter.on('update', (data) => {
+        eventUpdate = true
+      })
+
+      meter._connection._connection.mockData(dsmr5Error)
+
+      // Wait
+      setTimeout(() => {
+        done()
+      }, 100)
+    })
+
+    it('the telegram event should be received', function () {
+      assert.strictEqual(eventTelegram, true, 'the telegram event has not been set')
+    })
+
+    it('the update event should not be received', function () {
+      assert.strictEqual(eventUpdate, false, 'the updates event has been set')
+    })
+  })
+
+  describe('process telegram with in-correct checksum and option to ignore CRC: ', function () {
+    before(function (done) {
+      eventUpdate = false
+
+      meter.on('telegram', (data) => {
+        eventTelegram = true
+      })
+
+      meter.on('update', (data) => {
+        eventUpdate = true
+      })
+
+      meter._ignoreCrc = true
+      meter._connection._connection.mockData(dsmr5Error)
+
+      // Wait
+      setTimeout(() => {
+        done()
+      }, 100)
+    })
+
+    it('the telegram event should be received', function () {
+      assert.strictEqual(eventTelegram, true, 'the telegram event has not been set')
+    })
+
+    it('the update event should be received', function () {
+      assert.strictEqual(eventUpdate, true, 'the updates event has not been set')
     })
   })
 })
