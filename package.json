@@ -8,7 +8,7 @@
     "url": "https://github.com/reneklootwijk/node-dsmr.git"
   },
   "dependencies": {
-    "serialport": "^8.0.7",
+    "serialport": "^9.0.6",
     "winston": "^3.2.1"
   },
   "license": "MIT",
