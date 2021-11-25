@@ -9,7 +9,7 @@ The parser supports telegrams compliant to DSMR version 2.x, 3.x, 4.x and 5.x.
 ## Installation
 
 ```bash
-$ npm install node-dsmr
+npm install node-dsmr
 ```
 
 ## API
@@ -46,11 +46,10 @@ The arguments are:
 ### SmartMeter.connect
 
 The connect method is used to connect and open the serial port.
- 
+
 ```javascript
 smartMeter.connect()
 ```
-
 
 ### Events
 
@@ -77,6 +76,8 @@ When an event happens, e.g. successful connection or a telegram has been receive
         gas: {
             equipmentId: '2222ABCD12345678A',
             totalConsumed: 0,
+            consumedLastPeriod: 0,
+            reportedPeriod: 5,
             timestamp: 1234450800,
             valvePosition: 1
         },
@@ -84,7 +85,7 @@ When an event happens, e.g. successful connection or a telegram has been receive
     }
     ```
 
-* `update`, a new telegram has been received with updated metrics, the data of the event contains the updated metrics as JSON. The power metrics presenting the actual consumption and/or production are continuously measured and for that reason always included in the update event, even when the actual value is the same as the previous measurement. The gas metrics presenting the total consumption is measured periodically as indicated with the included timestamp. When the timestamp indicates a new measurement has been performed, the value is included in the update event even when the measurement is the same as the previous measurement.
+* `update`, a new telegram has been received with updated metrics, the data of the event contains the updated metrics as JSON. The power metrics presenting the actual consumption and/or production are continuously measured and for that reason always included in the update event, even when the actual value is the same as the previous measurement. The gas metrics presenting the total consumption is measured periodically as indicated with the included timestamp. When the timestamp indicates a new measurement has been performed the consumption since the last report is included even when 0. The total gas consumption is only reported when it has changed.
 
     Example:
 
@@ -95,6 +96,10 @@ When an event happens, e.g. successful connection or a telegram has been receive
             "activeTariff": 1,
             "actualConsumed": 1.193,
             "actualProduced": 0
+        },
+        "gas": {
+            "reportedPeriod": 5,
+            "consumedLastPeriod": 0
         }
     }
      ```
@@ -106,8 +111,8 @@ The following metrics are reported when they are included in the telegram receiv
 | Category | Metric | Description                                  |
 |-|-|-|
 | | meterModel | |
-| | dsmrVersion| only report for DSMR version 4.x and 5.x |
-| | timestamp | timestamp of the telegram |
+| | dsmrVersion| only reported for DSMR version 4.x and 5.x |
+| | timestamp | timestamp of the telegram, only reported for DSMR version 4.x and 5.x |
 | **`power`** | equipmentId | |
 | | totalConsumed1 | total consumption in tariff 1 (off-peak) |
 | | totalConsumed2 | total consumption in tariff 2 (peak) |
@@ -119,39 +124,40 @@ The following metrics are reported when they are included in the telegram receiv
 | | failureLog | power failure event log (see below) |
 | | failures | number of power failures |
 | | failuresLong | number of long power failures |
-| | voltageSagsL1 | |
-| | voltageSagsL2 | |
-| | voltageSagsL3 | |
-| | voltageSwellsL1 | |
-| | voltageSwellsL2 | |
-| | voltageSwellsL3 | |
-| | instantaneousCurrentL1 | |
-| | instantaneousCurrentL2 | |
-| | instantaneousCurrentL3 | |
-| | instantaneousVoltageL1 | |
-| | instantaneousVoltageL2 | |
-| | instantaneousVoltageL3 | |
-| | instantaneousConsumedElectricityL1 | |
-| | instantaneousConsumedElectricityL2 | |
-| | instantaneousConsumedElectricityL3 | |
-| | instantaneousProducedElectricityL1 | |
-| | instantaneousProducedElectricityL2 | |
-| | instantaneousProducedElectricityL3 | |
+| | voltageSagsL1 | Number of voltage dips on phase 1 |
+| | voltageSagsL2 | Number of voltage dips on phase 2 |
+| | voltageSagsL3 | Number of voltage dips on phase 3 |
+| | voltageSwellsL1 | Number of voltage peaks on phase 1 |
+| | voltageSwellsL2 | Number of voltage dips on phase 2 |
+| | voltageSwellsL3 | Number of voltage dips on phase 3 |
+| | instantaneousCurrentL1 | actual consumed current in Amperes on phase 1 |
+| | instantaneousCurrentL2 | actual consumed current in Amperes on phase 2 |
+| | instantaneousCurrentL3 | actual consumed current in Amperes on phase 3 |
+| | instantaneousVoltageL1 | actual voltage on phase 1 |
+| | instantaneousVoltageL2 | actual voltage on phase 2|
+| | instantaneousVoltageL3 | actual voltage on phase 3|
+| | instantaneousConsumedElectricityL1 | actual consumed electricity in Watts on phase 1 |
+| | instantaneousConsumedElectricityL2 | actual consumed electricity in Watts on phase 2 |
+| | instantaneousConsumedElectricityL3 | actual consumed electricity in Watts on phase 3 |
+| | instantaneousProducedElectricityL1 | actual produced electricity in Watts on phase 1 |
+| | instantaneousProducedElectricityL2 | actual produced electricity in Watts on phase 2 |
+| | instantaneousProducedElectricityL3 | actual produced electricity in Watts on phase 3 |
 | | switchPosition | |
 | **`gas`** | equipmentId | |
 | | timestamp | timestamp of the last measurement |
 | | totalConsumed | measured total consumption |
+| | consumedLastPeriod | consumption since last report |
 | | reportedPeriod | period in minutes over which the total consumption is reported |
 | | valvePosition | |
 
 ### Failures
 
-DSMR version 4.x and 5.x might contain a failure event log which is reported as an array. 
+DSMR version 4.x and 5.x might contain a failure event log which is reported as an array.
 
-    Example:
+   Example:
 
-    ```javascript
-    [
+   ```javascript
+   [
         {
             "timestampEnd": 1291818255,
             "duration": 240
@@ -160,8 +166,8 @@ DSMR version 4.x and 5.x might contain a failure event log which is reported as 
             "timestampEnd": 1291817404,
             "duration": 301
         }
-    ]
-    ```
+   ]
+   ```
 
 ### Parser
 

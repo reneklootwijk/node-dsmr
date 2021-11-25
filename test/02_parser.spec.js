@@ -1,6 +1,28 @@
 const assert = require('chai').assert
 const parser = require('../lib/parser')
 
+const dsmr2 = [
+  '/KMP5 ZABF001587315111\r',
+  '0-0:96.1.1(4B384547303034303436333935353037)\r',
+  '1-0:1.8.1(12345.678*kWh)\r',
+  '1-0:1.8.2(12345.678*kWh)\r',
+  '1-0:2.8.1(12345.678*kWh)\r',
+  '1-0:2.8.2(12345.678*kWh)\r',
+  '0-0:96.14.0(0002)\r',
+  '1-0:1.7.0(0001.19*kW)\r',
+  '1-0:2.7.0(0000.00*kW)\r',
+  '0-0:17.0.0(999*A)\r',
+  '0-0:96.3.10(1)\r',
+  '0-0:96.13.1()\r',
+  '0-0:96.13.0()\r',
+  '0-1:24.1.0(3)\r',
+  '0-1:96.1.0(3238313031453631373038389930337131)\r',
+  '0-1:24.3.0(090212160000)(08)(60)(1)(0-1:24.2.1)(m3)\r',
+  '(00123.456)\r',
+  '0-1:24.4.0(1)\r',
+  '!'
+]
+
 const dsmr3 = [
   '/ISk5\\2MT382-1000\r',
   '0-0:96.1.1(4B384547303034303436333935353037)\r',
@@ -96,6 +118,58 @@ const dsmr5 = [
 ]
 
 describe('Parser tests:', function () {
+  describe('parse DSMR 2.x telegram', function () {
+    var result
+
+    before(function (done) {
+      // Parse DSMR 2 message
+      result = parser(dsmr2)
+
+      done()
+    })
+
+    it('the meter model should have been determined', function () {
+      assert.strictEqual(result.meterModel, 'KMP5 ZABF001587315111', 'wrong meter model')
+    })
+
+    it('the power equipment Id should have been determined', function () {
+      assert.strictEqual(result.power.equipmentId, 'K8EG004046395507', 'wrong equipment Id')
+    })
+
+    it('the consumed power should have been determined', function () {
+      assert.strictEqual(result.power.actualConsumed, 1.19, 'wrong actual power consumption')
+      assert.strictEqual(result.power.totalConsumed1, 12345.678, 'wrong total power consumption in tariff 1')
+      assert.strictEqual(result.power.totalConsumed2, 12345.678, 'wrong total power consumption in tariff 2')
+    })
+
+    it('the produced power should have been determined', function () {
+      assert.strictEqual(result.power.actualProduced, 0, 'wrong actual power production')
+      assert.strictEqual(result.power.totalProduced1, 12345.678, 'wrong total power production in tariff 1')
+      assert.strictEqual(result.power.totalProduced2, 12345.678, 'wrong total power production in tariff 2')
+    })
+
+    it('the active power tariff should have been determined', function () {
+      assert.strictEqual(result.power.activeTariff, 2, 'wrong active tariff')
+    })
+
+    it('the power switch position should have been determined', function () {
+      assert.strictEqual(result.power.switchPosition, 1, 'wrong switch position')
+    })
+
+    it('the consumed gas should have been determined', function () {
+      assert.strictEqual(result.gas.totalConsumed, 123.456, 'wrong total gas consumption')
+      assert.strictEqual(result.gas.reportedPeriod, 60, 'wrong reported period')
+    })
+
+    it('the consumed gas timestamp should have been determined', function () {
+      assert.strictEqual(result.gas.timestamp, 1234450800, 'wrong timestamp gas measurement')
+    })
+
+    it('the gas valve position should have been determined', function () {
+      assert.strictEqual(result.gas.valvePosition, 1, 'wrong valve position')
+    })
+  })
+
   describe('parse DSMR 3.x telegram', function () {
     var result
 
