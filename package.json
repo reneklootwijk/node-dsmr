@@ -1,6 +1,6 @@
 {
   "name": "node-dsmr",
-  "version": "0.1.20",
+  "version": "1.0.0",
   "author": "Rene Klootwijk <rene.klootwijk@rencon.nl>",
   "description": "Parser for the DSMR protocol used on the P1 port of smart meters",
   "repository": {
@@ -19,15 +19,15 @@
   "devDependencies": {
     "chai": "^4.2.0",
     "codecov": ">=3.6.5",
-    "eslint": "^6.6.0",
+    "eslint": "^8.3.0",
     "eslint-config-standard": "^14.1.0",
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-mocha": "^6.2.1",
     "eslint-plugin-node": "^10.0.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
-    "mocha": "^6.2.2",
-    "nyc": "^14.1.1",
+    "mocha": "^9.1.3",
+    "nyc": "^15.1.0",
     "rewiremock": "^3.13.9"
   },
   "publishConfig": {
