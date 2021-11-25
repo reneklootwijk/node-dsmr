@@ -6,8 +6,8 @@ const rewireMock = require('rewiremock/node')
 
 rewireMock.enable()
 
+rewireMock('@serialport/parser-readline').by('./mocks/serialport')
 rewireMock('serialport').by('./mocks/serialport')
-// rewireMock('@serialport/parser-readline').by('./mocks/serialport')
 
 const SmartMeter = require('../lib')
 
