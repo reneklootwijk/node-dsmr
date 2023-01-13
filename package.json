@@ -1,6 +1,6 @@
 {
   "name": "node-dsmr",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "author": "Rene Klootwijk <rene.klootwijk@rencon.nl>",
   "description": "Parser for the DSMR protocol used on the P1 port of smart meters",
   "repository": {
