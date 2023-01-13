@@ -1,5 +1,5 @@
-const assert = require('chai').assert
-const crc = require('../lib/crc')
+const assert = require('chai').assert;
+const crc = require('../lib/crc');
 
 const dsmr4 = [
   '/ISk5\\MT174-001\r',
@@ -30,7 +30,7 @@ const dsmr4 = [
   '1-0:51.7.0(000.0*A)\r',
   '1-0:71.7.0(000.0*A)\r',
   '!02AD'
-]
+];
 
 const dsmr5 = [
   '/XMX5LGF0010455307579\r',
@@ -71,18 +71,18 @@ const dsmr5 = [
   '0-1:96.1.0(4730303738353635353836323132323230)\r',
   '0-1:24.2.1(201003203926S)(00035.545*m3)\r',
   '!459C'
-]
+];
 
 describe('CRC tests:', function () {
-  var result
+  var result;
 
   it('calculate CSR for DSMR4 telegram', function () {
-    result = crc(dsmr4)
-    assert.strictEqual(result, 0x02AD, 'incorrect CRC')
-  })
+    result = crc(dsmr4);
+    assert.strictEqual(result, 0x02AD, 'incorrect CRC');
+  });
 
   it('calculate CSR for DSMR5 telegram', function () {
-    result = crc(dsmr5)
-    assert.strictEqual(result, 0x459C, 'incorrect CRC')
-  })
-})
+    result = crc(dsmr5);
+    assert.strictEqual(result, 0x459C, 'incorrect CRC');
+  });
+});

@@ -4,13 +4,21 @@
 [![Coverage Status](https://coveralls.io/repos/github/reneklootwijk/node-dsmr/badge.svg?branch=master)](https://coveralls.io/github/reneklootwijk/node-dsmr?branch=master)
 [![npm](https://img.shields.io/npm/v/node-dsmr)](https://www.npmjs.com/package/node-dsmr)
 
-The parser supports telegrams compliant to DSMR version 2.x, 3.x, 4.x and 5.x.
+The parser supports telegrams compliant to DSMR version 3.x, 4.x and 5.x, and eMUCs version 1.7.1 (since version 2).
 
 ## Installation
 
 ```bash
 npm install node-dsmr
 ```
+
+## Breaking changes
+
+Version 2.0.0 introduced the following breaking changes:
+
+* Support for DSMR version 2.x has been dropped
+* The *power* section has been renamed to *electricity*, e.g. *power.totalConsumed1* is now *electricity.totalConsumed1*
+* The properties *instantaneousConsumedElectricityL1/L2/L3* and *instantaneousProducedElectricityL1/L2/L3* are renamed to *instantaneousConsumedPowerL1/L2/L3* and *instantaneousProducedL1/L2/L3*
 
 ## API
 
@@ -38,10 +46,10 @@ var smartMeter = new SmartMeter(options)
 The arguments are:
 
 * `port`, serial port to which the P1 port is connected
-* `baudrate`, the rate at which the P1 port communicates, for DSMR 2.2 and 3.0 meters this is `9600` and for 4.x this is `115200`.
-* `databits`, the number of bits used, for DSMR 2.2 and 3.0 meters this is `7` and for 4.x this is `8`.
-* `parity`, the parity used, for DSMR 2.2 and 3.0 this is `even` and for 4.x this is `none`.
-* `disableCrcChecking`, when set to `true` the CRC check is disabled. The default is to check the CRC specified in the telegram with the calculated CRC, when they do not match, the telegram is not processed. When no CRC is specified as part of the telegram (e.g. for a DSMR 2.x message), the check is bypassed.
+* `baudrate`, the rate at which the P1 port communicates, for DSMR 3.0 meters this is `9600` and for 4.x this is `115200`.
+* `databits`, the number of bits used, for 3.0 meters this is `7` and for 4.x this is `8`.
+* `parity`, the parity used, for 3.0 this is `even` and for 4.x this is `none`.
+* `disableCrcChecking`, when set to `true` the CRC check is disabled. The default is to check the CRC specified in the telegram with the calculated CRC, when they do not match, the telegram is not processed. When no CRC is specified as part of the telegram (e.g. for a DSMR 3.x message), the check is bypassed.
 
 ### SmartMeter.connect
 
@@ -62,7 +70,7 @@ When an event happens, e.g. successful connection or a telegram has been receive
 
     ```javascript
     {
-        power: {
+        electricity: {
             equipmentId: 'K8EG004046395507',
             totalConsumed1: 12345.678,
             totalConsumed2: 12345.678,
@@ -85,13 +93,13 @@ When an event happens, e.g. successful connection or a telegram has been receive
     }
     ```
 
-* `update`, a new telegram has been received with updated metrics, the data of the event contains the updated metrics as JSON. The power metrics presenting the actual consumption and/or production are continuously measured and for that reason always included in the update event, even when the actual value is the same as the previous measurement. The gas metrics presenting the total consumption is measured periodically as indicated with the included timestamp. When the timestamp indicates a new measurement has been performed the consumption since the last report is included even when 0. The total gas consumption is only reported when it has changed.
+* `update`, a new telegram has been received with updated metrics, the data of the event contains the updated metrics as JSON. The electricity metrics presenting the actual consumption and/or production are continuously measured and for that reason always included in the update event, even when the actual value is the same as the previous measurement. The gas metrics presenting the total consumption is measured periodically as indicated with the included timestamp. When the timestamp indicates a new measurement has been performed the consumption since the last report is included even when 0. The total gas consumption is only reported when it has changed.
 
     Example:
 
     ```javascript
     {
-        "power": {
+        "electricity": {
             "totalConsumed1": 123456.789,
             "activeTariff": 1,
             "actualConsumed": 1.193,
@@ -108,47 +116,52 @@ When an event happens, e.g. successful connection or a telegram has been receive
 
 The following metrics are reported when they are included in the telegram received from the P1 port:
 
-| Category | Metric | Description                                  |
-|-|-|-|
-| | meterModel | |
-| | dsmrVersion| only reported for DSMR version 4.x and 5.x |
-| | timestamp | timestamp of the telegram, only reported for DSMR version 4.x and 5.x |
-| **`power`** | equipmentId | |
-| | totalConsumed1 | total consumption in tariff 1 (off-peak) |
-| | totalConsumed2 | total consumption in tariff 2 (peak) |
-| | totalProduced1 | total production in tariff 1 (off-peak) |
-| | totalProduced2 | total production in tariff 2 (peak) |
-| | actualConsumed | |
-| | actualProduced | |
-| | actualTariff | active tariff (1=off-peak or 2=peak) |
-| | failureLog | power failure event log (see below) |
-| | failures | number of power failures |
-| | failuresLong | number of long power failures |
-| | voltageSagsL1 | Number of voltage dips on phase 1 |
-| | voltageSagsL2 | Number of voltage dips on phase 2 |
-| | voltageSagsL3 | Number of voltage dips on phase 3 |
-| | voltageSwellsL1 | Number of voltage peaks on phase 1 |
-| | voltageSwellsL2 | Number of voltage dips on phase 2 |
-| | voltageSwellsL3 | Number of voltage dips on phase 3 |
-| | instantaneousCurrentL1 | actual consumed current in Amperes on phase 1 |
-| | instantaneousCurrentL2 | actual consumed current in Amperes on phase 2 |
-| | instantaneousCurrentL3 | actual consumed current in Amperes on phase 3 |
-| | instantaneousVoltageL1 | actual voltage on phase 1 |
-| | instantaneousVoltageL2 | actual voltage on phase 2|
-| | instantaneousVoltageL3 | actual voltage on phase 3|
-| | instantaneousConsumedElectricityL1 | actual consumed electricity in Watts on phase 1 |
-| | instantaneousConsumedElectricityL2 | actual consumed electricity in Watts on phase 2 |
-| | instantaneousConsumedElectricityL3 | actual consumed electricity in Watts on phase 3 |
-| | instantaneousProducedElectricityL1 | actual produced electricity in Watts on phase 1 |
-| | instantaneousProducedElectricityL2 | actual produced electricity in Watts on phase 2 |
-| | instantaneousProducedElectricityL3 | actual produced electricity in Watts on phase 3 |
-| | switchPosition | |
-| **`gas`** | equipmentId | |
-| | timestamp | timestamp of the last measurement |
-| | totalConsumed | measured total consumption |
-| | consumedLastPeriod | consumption since last report |
-| | reportedPeriod | period in minutes over which the total consumption is reported |
-| | valvePosition | |
+| Category | Metric | OBIS reference | Description                                  |
+|-|-|-|-|
+| | meterModel | | |
+| | dsmrVersion| 1-3:0.2.8<br/>0-0:96.1.4 | Version of the specification |
+| | timestamp | 0-0:1.0.0 |timestamp of the telegram |
+| | connectedMeters | | details of all connected meters (the electricity meter is always connected and not reported here) |
+| **`electricity`** | equipmentId | 0-0:96.1.1 | |
+| | totalConsumed1 | 1-0:1.8.1 | total consumption in tariff 1 in kWh |
+| | totalConsumed2 | 1-0:1.8.2 | total consumption in tariff 2 in kWh |
+| | totalProduced1 | 1-0:2.8.1 | total production in tariff 1 in kWh |
+| | totalProduced2 | 1-0:2.8.2 | total production in tariff 2 in kWh |
+| | actualConsumed | 1-0:1.7.0 | actual consumption in kW |
+| | actualProduced | 1-0:2.7.0 | actual produced in kW |
+| | actualTariff | 1-0:2.7.0 | active tariff |
+| | failureLog | 1-0:99.97.0 | power failure event log (see below) |
+| | failures | 0-0:96.7.21 | number of power failures |
+| | failuresLong | 0-0:96.7.9 | number of long power failures |
+| | voltageSagsL1 | 1-0:32.32.0 | Number of voltage dips on phase 1 |
+| | voltageSagsL2 | 1-0:52.32.0 | Number of voltage dips on phase 2 |
+| | voltageSagsL3 | 1-0:72.32.0 | Number of voltage dips on phase 3 |
+| | voltageSwellsL1 | 1-0:32.36.0 | Number of voltage peaks on phase 1 |
+| | voltageSwellsL2 | 1-0:52.36.0 | Number of voltage dips on phase 2 |
+| | voltageSwellsL3 | 1-0:72.36.0 | Number of voltage dips on phase 3 |
+| | instantaneousCurrentL1 | 1-0:31.7.0 | actual consumed current in Amperes on phase 1 |
+| | instantaneousCurrentL2 | 1-0:51.7.0 | actual consumed current in Amperes on phase 2 |
+| | instantaneousCurrentL3 | 1-0:71.7.0 | actual consumed current in Amperes on phase 3 |
+| | instantaneousVoltageL1 | 1-0:32.7.0 | actual voltage on phase 1 |
+| | instantaneousVoltageL2 | 1-0:52.7.0 | actual voltage on phase 2|
+| | instantaneousVoltageL3 | 1-0:72.7.0 | actual voltage on phase 3|
+| | instantaneousConsumedPowerL1 | 1-0:21.7.0 | actual consumed power in Watts on phase 1 |
+| | instantaneousConsumedPowerL2 | 1-0:41.7.0 | actual consumed power in Watts on phase 2 |
+| | instantaneousConsumedPowerL3 | 1-0:61.7.0 | actual consumed power in Watts on phase 3 |
+| | instantaneousProducedPowerL1 | 1-0:22.7.0 | actual produced power in Watts on phase 1 |
+| | instantaneousProducedPowerL2 | 1-0:42.7.0 |actual produced power in Watts on phase 2 |
+| | instantaneousProducedPowerL3 | 1-0:62.7.0 | actual produced power in Watts on phase 3 |
+| | switchPosition | 0-0:96.3.10 | Switch position Electricity (in/out/enabled) |
+| **`gas`** | equipmentId | 0-n:96.1.0<br/>0-n:96.1.1 | |
+| | timestamp | 0-n:24.2.1 | timestamp of the last measurement |
+| | totalConsumed | 0-n:24.2.1 | measured total consumption |
+| | reportedPeriod | 0-n:24.2.1 | period in minutes over which the total consumption is reported |
+| | valvePosition | 0-n:24.4.0 |
+| **`water`** | equipmentId | 0-n:96.1.0<br/>0-n:96.1.1 | |
+| | timestamp | 0-n:24.2.1 | timestamp of the last measurement |
+| | totalConsumed | 0-n:24.2.1 | measured total consumption |
+| | reportedPeriod | 0-n:24.2.1 | period in minutes over which the total consumption is reported |
+| | valvePosition | 0-n:24.4.0 | |
 
 ### Failures
 
