@@ -18,7 +18,7 @@ Version 2.0.0 introduced the following breaking changes:
 
 * Support for DSMR version 2.x has been dropped
 * The *power* section has been renamed to *electricity*, e.g. *power.totalConsumed1* is now *electricity.totalConsumed1*
-* The properties *instantaneousConsumedElectricityL1/L2/L3* and *instantaneousProducedElectricityL1/L2/L3* are renamed to *instantaneousConsumedPowerL1/L2/L3* and *instantaneousProducedL1/L2/L3*
+* The properties *instantaneousConsumedElectricityL1/L2/L3* and *instantaneousProducedElectricityL1/L2/L3* are renamed to *instantaneousConsumedPowerL1/L2/L3* and *instantaneousProducedPowerL1/L2/L3*
 
 ## API
 
