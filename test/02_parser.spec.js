@@ -463,14 +463,14 @@ describe('Parser tests:', function () {
 
     it('the active energy import history should have been determined', function () {
       assert.strictEqual(result.electricity.capacity.import.history.length, 3, 'wrong number of reported months');
-      assert.strictEqual(result.electricity.capacity.import.history[0].start, 1588284000, 'wrong start timestamp period 3');
-      assert.strictEqual(result.electricity.capacity.import.history[0].end, 1587662738, 'wrong stop timestamp period 3');
+      assert.strictEqual(result.electricity.capacity.import.history[0].start, 1587662738, 'wrong start timestamp period 3');
+      assert.strictEqual(result.electricity.capacity.import.history[0].end, 1588284000, 'wrong stop timestamp period 3');
       assert.strictEqual(result.electricity.capacity.import.history[0].maxDemand, 3.695, 'wrong max. demand period 3');
-      assert.strictEqual(result.electricity.capacity.import.history[1].start, 1585692000, 'wrong start timestamp period 2');
-      assert.strictEqual(result.electricity.capacity.import.history[1].end, 1583407299, 'wrong stop timestamp period 2');
+      assert.strictEqual(result.electricity.capacity.import.history[1].start, 1583407299, 'wrong start timestamp period 2');
+      assert.strictEqual(result.electricity.capacity.import.history[1].end, 1585692000, 'wrong stop timestamp period 2');
       assert.strictEqual(result.electricity.capacity.import.history[1].maxDemand, 5.98, 'wrong max. demand period 2');
-      assert.strictEqual(result.electricity.capacity.import.history[2].start, 1583017200, 'wrong start timestamp period 1');
-      assert.strictEqual(result.electricity.capacity.import.history[2].end, 1581303261, 'wrong stop timestamp period 1');
+      assert.strictEqual(result.electricity.capacity.import.history[2].start, 1581303261, 'wrong start timestamp period 1');
+      assert.strictEqual(result.electricity.capacity.import.history[2].end, 1583017200, 'wrong stop timestamp period 1');
       assert.strictEqual(result.electricity.capacity.import.history[2].maxDemand, 4.318, 'wrong max. demand period 1');
     });
 
